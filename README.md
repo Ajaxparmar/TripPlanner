@@ -5,11 +5,16 @@ Tripthread helps friends share trip expenses. Create a trip room, invite friends
 ## What you can do
 
 - Create an account and personalize your profile with a photo, home city, and bio.
-- Create a trip room and share its invite link directly or through WhatsApp.
-- Record an expense in INR with a payer, category, and date.
-- See each tripmate's payments, share, and balance in the room. **Who pays whom** shows the suggested transfers.
+- Create a trip room with a starting point, destination, and optional stops in travel order. Share its invite link directly or through WhatsApp.
+- Start a group budget with your own contribution. The organizer can also record contributions from other tripmates.
+- Record what an expense was for, where it happened, who spent the money, and whether it came from personal funds or the group budget.
+- See who's in the trip and how much each person spent, including shared-budget expenses. Review their payments, share, and balance in the same room.
+- Use **Who pays whom** to see the suggested transfers.
+- End a trip as its organizer. The ledger and settlements stay available to members after invites and expense entry close.
 
 The app splits the full trip total among current tripmates and recalculates when someone joins. It uses integer paise and distributes any remainder one paisa at a time so the shares add up exactly.
+
+Budget contributions count toward what a member has paid. Expenses paid from the group budget reduce its balance. The settlement shows refunds from unused budget cash before suggesting transfers between tripmates.
 
 If Akhil pays ₹2,000 and Meera pays ₹1,000 on a three-person trip, everyone's share is ₹1,000. Dev, who paid ₹0 upfront, pays Akhil ₹1,000.
 

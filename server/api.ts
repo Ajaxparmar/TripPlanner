@@ -1,7 +1,7 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
 import { authenticate, findUser, sessionToken, signOut, updateProfile } from "./accounts";
 import { json, readBody, RequestError } from "./request";
-import { addExpense, createTrip, joinTrip, listTrips, readRoom } from "./trips";
+import { addBudgetDeposit, addExpense, createTrip, endTrip, joinTrip, listTrips, readRoom } from "./trips";
 
 export async function tripApi(request: Request, db: PrismaClient, action: string) {
   try {
@@ -29,6 +29,8 @@ export async function tripApi(request: Request, db: PrismaClient, action: string
         case "logout": return json({}, 200, await signOut(db, request, token));
         case "profile": return json({ user: await updateProfile(db, user.id, body) });
         case "trips": return json(await createTrip(db, user.id, body), 201);
+        case "end-trip": return json(await endTrip(db, user.id, body));
+        case "budget": return json(await addBudgetDeposit(db, user.id, body), 201);
         case "join": return json(await joinTrip(db, user.id, body));
         case "expenses": return json(await addExpense(db, user.id, body), 201);
       }

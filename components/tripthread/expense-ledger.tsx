@@ -15,7 +15,8 @@ export function ExpenseLedger({ expenses }: { expenses: Expense[] }) {
         <span className={`category-icon category-${expense.category.toLowerCase()}`}><Icon size={19} /></span>
         <div className="ledger-detail">
           <strong>{expense.title}</strong>
-          <span>{expense.category} · Paid by {expense.payer} · {displayDate(expense.spentOn)}</span>
+          <span>{expense.category} · {expense.location && `${expense.location} · `}{displayDate(expense.spentOn)}</span>
+          <span>{expense.fromBudget ? `Spent by ${expense.payer} · Group budget` : `Paid by ${expense.payer} · Personal funds`}</span>
         </div>
         <div className="ledger-amount"><strong>{money(expense.amount)}</strong></div>
       </li>;

@@ -1,32 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Compass, MapPin, Mountain, Plus, Users } from "lucide-react";
+import { Compass, Mountain, Plus, Route, Users, X } from "lucide-react";
 import { api, useRemoteData, useSubmission } from "@/lib/trip-client";
 import { money } from "@/lib/trip-format";
 import { tripRoomPath } from "@/lib/trip-routes";
-import type { TripSummary } from "@/lib/trip-types";
+import { maxStopLength, maxTripStops, type TripSummary } from "@/lib/trip-types";
+import { AmountInput } from "./amount-input";
 import { Dialog } from "./dialog";
 import { ErrorMessage } from "./status";
-import { TripDates } from "./trip-details";
+import { TripDates, TripRoute, TripStatus } from "./trip-details";
 
 function StartTrip({ close }: { close: () => void }) {
   const router = useRouter();
   const { busy, error, submit } = useSubmission();
-  return <Dialog title="Start a trip" subtitle="Create a room for your group." close={() => { if (!busy) close(); }}>
-    <form className="form" onSubmit={(event) => submit(event, async (values) => {
-      const { id } = await api<{ id: string }>("trips", values);
+  const [stops, setStops] = useState<{ id: number; name: string }[]>([]);
+  const nextStop = useRef(0);
+  return <Dialog title="Start a trip" subtitle="Choose where you’ll start and where you’re headed." close={() => { if (!busy) close(); }}>
+    <form className="form trip-form" onSubmit={(event) => submit(event, async (values) => {
+      const { id } = await api<{ id: string }>("trips", { ...values, stops: stops.map(({ name }) => name.trim()).filter(Boolean) });
       router.push(tripRoomPath(id));
       close();
     })}>
       <label>Trip name<input name="name" placeholder="e.g. Goa with friends" maxLength={100} required /></label>
-      <label>Destination<input name="destination" placeholder="e.g. Goa, India" maxLength={100} required /></label>
+      <div className="form-grid">
+        <label>From<input name="origin" placeholder="e.g. Mumbai" maxLength={100} required /></label>
+        <label>To<input name="destination" placeholder="e.g. Goa" maxLength={100} required /></label>
+      </div>
       <div className="form-grid">
         <label>Start date<input name="starts" type="date" /></label>
         <label>End date<input name="ends" type="date" /></label>
       </div>
+      <fieldset className="stop-editor" disabled={busy}>
+        <legend><Route size={16} aria-hidden="true" /> Stops <span className="optional">Optional</span></legend>
+        {stops.map((stop, index) => <div className="stop-field" key={stop.id}>
+          <label>
+            <span className="stop-number" aria-hidden="true">{index + 1}</span>
+            <input aria-label={`Stop ${index + 1}`} value={stop.name} maxLength={maxStopLength} placeholder="e.g. Fort Aguada"
+              onChange={(event) => {
+                const name = event.currentTarget.value;
+                setStops((items) => items.map((item) => item.id === stop.id ? { ...item, name } : item));
+              }} />
+          </label>
+          <button type="button" className="icon-button" aria-label={`Remove stop ${index + 1}`}
+            onClick={() => setStops((items) => items.filter((item) => item.id !== stop.id))}><X size={17} /></button>
+        </div>)}
+        {stops.length < maxTripStops && <button type="button" className="add-stop"
+          onClick={() => {
+            const id = nextStop.current++;
+            setStops((items) => [...items, { id, name: "" }]);
+          }}><Plus size={16} /> Add a stop</button>}
+      </fieldset>
+      <AmountInput name="initialBudget" label="Your starting contribution (₹)" optional />
       <ErrorMessage message={error} />
       <button className="button primary" disabled={busy}>{busy ? "Creating…" : "Create trip room"}</button>
     </form>
@@ -47,10 +74,14 @@ export function TripList() {
     <ErrorMessage message={error} banner />
     {data?.trips.length ? <section className="trip-grid" aria-label="Your trip rooms">
       {data.trips.map((trip) => <Link className="trip-tile" key={trip.id} href={tripRoomPath(trip.id)}>
-        <span className="tile-icon"><Mountain size={22} /></span>
+        <span className="tile-top">
+          <span className="tile-icon"><Mountain size={22} /></span>
+          <TripStatus endedAt={trip.endedAt} />
+        </span>
         <strong>{trip.name}</strong>
-        <span className="meta"><MapPin size={15} />{trip.destination}</span>
+        <TripRoute trip={trip} />
         <TripDates trip={trip} />
+        {trip.stops.length > 0 && <span className="meta"><Route size={15} />{trip.stops.length} {trip.stops.length === 1 ? "stop" : "stops"}</span>}
         <span className="tile-bottom">
           <span className="meta"><Users size={16} />{trip.memberCount} {trip.memberCount === 1 ? "member" : "members"}</span>
           <b>{money(trip.total)}</b>

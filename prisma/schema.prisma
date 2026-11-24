@@ -38,9 +38,14 @@ model Session {
 model Trip {
   id          String    @id @map("_id")
   name        String
+  origin      String?
   destination String
   starts      String    @default("")
   ends        String    @default("")
+  stops       String[]  @default([])
+  deposits    BudgetDeposit[]
+  endedAt     DateTime?
+  version     String?
   ownerId     String
   invite      String    @unique
   created     BigInt
@@ -50,6 +55,12 @@ model Trip {
 
   @@index([ownerId])
   @@map("trips")
+}
+
+type BudgetDeposit {
+  id        String
+  memberId  String
+  amount    BigInt
 }
 
 model Member {
@@ -70,6 +81,8 @@ model Expense {
   payerId      String
   title        String
   category     String
+  location     String?
+  fromBudget   Boolean?
   amount       BigInt
   spentOn      String
   created      BigInt

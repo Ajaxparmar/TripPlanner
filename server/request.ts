@@ -49,6 +49,15 @@ export function dateField(body: RequestBody, key: string, required = false) {
   return value;
 }
 
+export function amountField(body: RequestBody, key = "amount") {
+  const value = stringField(body, key, 12, true);
+  if (!/^\d{1,8}(?:\.\d{1,2})?$/.test(value)) throw new RequestError("Enter a valid amount.");
+  const [rupees, paise = ""] = value.split(".");
+  const amount = BigInt(rupees) * BigInt(100) + BigInt(paise.padEnd(2, "0"));
+  if (!amount) throw new RequestError("Enter an amount greater than zero.");
+  return amount;
+}
+
 export function json(data: object, status = 200, cookie?: string) {
   const headers = new Headers({ "Cache-Control": "no-store" });
   if (cookie) headers.set("Set-Cookie", cookie);
