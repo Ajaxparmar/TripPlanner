@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @map("_id")
+  email        String    @unique
+  name         String
+  password     String
+  photo        String    @default("")
+  city         String    @default("")
+  bio          String    @default("")
+  sessions     Session[]
+  ownedTrips   Trip[]
+  memberships  Member[]
+  expenses     Expense[]
+  legacyShares Share[]
+
+  @@map("users")
+}
+
+model Session {
+  token   String @id @map("_id")
+  userId  String
+  expires BigInt
+  user    User   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([expires])
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Trip {
+  id          String    @id @map("_id")
+  name        String
+  destination String
+  starts      String    @default("")
+  ends        String    @default("")
+  ownerId     String
+  invite      String    @unique
+  created     BigInt
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  members     Member[]
+  expenses    Expense[]
+
+  @@index([ownerId])
+  @@map("trips")
+}
+
+model Member {
+  id     String @id @map("_id")
+  tripId String
+  userId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user   User   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tripId, userId])
+  @@index([userId])
+  @@map("members")
+}
+
+model Expense {
+  id           String  @id @map("_id")
+  tripId       String
+  payerId      String
+  title        String
+  category     String
+  amount       BigInt
+  spentOn      String
+  created      BigInt
+  trip         Trip    @relation(fields: [tripId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payer        User    @relation(fields: [payerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  legacyShares Share[]
+
+  @@index([tripId, spentOn, created])
+  @@index([payerId])
+  @@map("expenses")
+}
+
+// Historical splits from older trips. Current balances use the full trip total.
+model Share {
+  id        String  @id @map("_id")
+  expenseId String
+  userId    String
+  amount    BigInt
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user      User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([expenseId, userId])
+  @@index([userId])
+  @@map("shares")
+}
