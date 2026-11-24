@@ -24,10 +24,15 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   outline: 2px solid #278866;
   outline-offset: 3px;
 }
-.brand { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; letter-spacing: -.055em; }
-.brand-icon { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; color: white; background: var(--green); }
-.brand-period { color: #73a65e; }
-.brand-button { border: 0; background: none; padding: 0; text-align: left; }
+.brand {
+  position: relative; display: block; width: var(--brand-width, 146px); aspect-ratio: 630 / 366;
+  overflow: hidden; border-radius: 9px; background: #f7f7f2;
+}
+.brand img {
+  position: absolute; top: 50%; left: 50%; width: 223.5%; height: auto; max-width: none;
+  transform: translate(-50%, -50%);
+}
+.brand-button { --brand-width: 120px; display: inline-flex; border-radius: 9px; }
 .auth-layout { min-height: 100svh; padding: 18px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .auth-cover {
   position: relative; align-self: start; position: sticky; top: 18px; height: calc(100svh - 36px); min-height: 620px;
@@ -35,8 +40,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   overflow: hidden; border-radius: 26px; color: white;
   background: linear-gradient(180deg, #061d18a0 0%, transparent 30%, #08201820 44%, #061b16ef 100%), url("/alpine-lake.jpg") 50% 49% / cover, #133f34;
 }
-.auth-cover .brand-icon { background: var(--lime); color: var(--green-dark); }
-.auth-cover .brand-period { color: var(--lime); }
+.auth-cover .brand { --brand-width: 174px; }
 .cover-content { margin-top: auto; }
 .cover-label { display: flex; width: fit-content; align-items: center; gap: 8px; color: var(--lime); font-size: .8125rem; font-weight: 750; letter-spacing: .13em; margin-bottom: 16px; }
 .cover-content h1 { margin: 0; font-size: clamp(2.6rem, 5vw, 5.25rem); letter-spacing: -.075em; line-height: .99; font-weight: 760; }
@@ -184,7 +188,8 @@ a.button, .brand-button, .account, .trip-tile, .back-button { text-decoration: n
   .auth-layout { display: block; padding: 0; }
   .auth-cover { display: none; }
   .auth-panel { min-height: 100svh; padding: 21px 22px 34px; align-content: start; justify-items: stretch; background: radial-gradient(ellipse at 100% 0%, #e1eddb, transparent 55%), var(--paper); }
-  .mobile-brand { display: block; margin-bottom: 34px; }
+  .mobile-brand { display: block; margin-bottom: 24px; }
+  .brand-button { --brand-width: 102px; }
   .auth-card { justify-self: center; }
   .auth-heading-icon { margin-bottom: 16px; }
   .auth-tabs { margin: 19px 0 17px; }

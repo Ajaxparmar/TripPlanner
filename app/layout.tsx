@@ -5,7 +5,7 @@ import "./tripthread.css";
 export const metadata: Metadata = {
   title: "Tripthread | Shared trip expenses",
   description: "Start a trip, invite your friends, and keep track of who paid for what.",
-  icons: { icon: "/tripthread.svg" },
+  icons: { icon: { url: "/tripthread-logo.png", type: "image/png" } },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -7,7 +7,8 @@ import { Compass, Eye, EyeOff, LockKeyhole, Mail, MapPin, UserRound, Users, Uten
 import { api, useSubmission } from "@/lib/trip-client";
 import { authDestination, authPath } from "@/lib/trip-routes";
 import type { User } from "@/lib/trip-types";
-import { Brand, PhotoField } from "./profile-photo";
+import { Brand } from "./brand";
+import { PhotoField } from "./profile-photo";
 import { useSession } from "./session";
 import { ErrorMessage, Loading } from "./status";
 

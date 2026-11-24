@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { authenticate, findUser, sessionToken, signOut, updateProfile } from "./accounts";
 import { json, readBody, RequestError } from "./request";
 import { addExpense, createTrip, joinTrip, listTrips, readRoom } from "./trips";
@@ -37,6 +37,11 @@ export async function tripApi(request: Request, db: PrismaClient, action: string
     throw new RequestError("Page not found.", 404);
   } catch (error) {
     if (error instanceof RequestError) return json({ error: error.message }, error.status);
+    if (error instanceof Prisma.PrismaClientInitializationError ||
+      (error instanceof Prisma.PrismaClientKnownRequestError && ["P1001", "P1002", "P1017"].includes(error.code))) {
+      console.error("Tripthread could not connect to MongoDB.");
+      return json({ error: "Tripthread can’t connect to its database right now." }, 503);
+    }
     console.error("Tripthread API error", error);
     return json({ error: "Something went wrong. Please try again." }, 500);
   }

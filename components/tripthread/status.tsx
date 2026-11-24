@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import { Brand } from "./profile-photo";
+import { Brand } from "./brand";
 
 export function Loading() {
   return <div className="loading"><Brand /><p role="status">Loading Tripthread…</p></div>;

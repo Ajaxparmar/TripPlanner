@@ -6,7 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { api, errorMessage } from "@/lib/trip-client";
 import { authPath } from "@/lib/trip-routes";
-import { Avatar, Brand } from "./profile-photo";
+import { Brand } from "./brand";
+import { Avatar } from "./profile-photo";
 import { useSession } from "./session";
 import { ErrorMessage, Loading } from "./status";
 

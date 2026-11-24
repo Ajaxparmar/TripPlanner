@@ -1,11 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Camera, Mountain, UserRound, X } from "lucide-react";
-
-export function Brand() {
-  return <div className="brand"><span className="brand-icon"><Mountain size={21} /></span><span>tripthread<span className="brand-period">.</span></span></div>;
-}
+import { Camera, UserRound, X } from "lucide-react";
 
 export function Avatar({ person, className = "" }: { person: { name: string; photo: string }; className?: string }) {
   const initials = person.name.trim().split(/\s+/).slice(0, 2).map((part) => Array.from(part)[0]).join("").toUpperCase();
